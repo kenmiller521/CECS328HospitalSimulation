@@ -13,13 +13,20 @@ public class EventManager : MonoBehaviour {
     public Text menuText,outputText;
     const string CONST_MENU_TEXT = "Enter a choice: \n1: Create a new heap H. Displays H\n2: Enter single element into heap H. Displays H\n3: Pop an elemeny from H. Displays H\n4: Do simulation\n5: Repeat simulation with developed algorithm";
     public GameObject[] nodeArray;
+    public List<GameObject> temp;
     // Use this for initialization
 	void Start () {
         _inMainMenu = true;
         nonMainMenuUserInput = null;
         H = new MinHeap();
         nodeArray = GameObject.FindGameObjectsWithTag("Node");
-        swapElements();
+        foreach(GameObject obj in nodeArray)
+        {
+            temp.Add(obj);
+        }
+        var sortedList = temp.OrderBy(go => go.name).ToList();
+        nodeArray = sortedList.ToArray();
+        //swapElements();
         foreach (GameObject obj in nodeArray)
             obj.SetActive(false);
 	}
