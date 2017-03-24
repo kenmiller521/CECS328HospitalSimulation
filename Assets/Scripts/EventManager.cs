@@ -101,6 +101,15 @@ public class EventManager : MonoBehaviour {
                 //yield return new WaitForSeconds(2);
                 break;
             case "2":
+                {
+                    menuText.text = CONST_MENU_TEXT + "\n\nYou chose to enter a new element. Enter your element below.";
+                    nonMainMenuInputField.placeholder.GetComponent<Text>().text = "Enter your element";
+                    while (nonMainMenuUserInput == null)
+                        yield return new WaitForSeconds(0.1f);
+                    H.insert(Convert.ToInt32(nonMainMenuUserInput));
+                    H.printHeap();
+                    printHeapToBranchUI();
+                }
                 break;
             case "3":
                 break;
@@ -116,6 +125,9 @@ public class EventManager : MonoBehaviour {
     }
     void printHeapToBranchUI()
     {
+        //set everything to inactive
+        foreach (GameObject obj in nodeArray)
+            obj.SetActive(false);
         int[] a = H.getArray();
         for(int i = 1; i < a.Length; i++)
         {
