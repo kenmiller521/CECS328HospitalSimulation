@@ -14,6 +14,7 @@ public class EventManager : MonoBehaviour {
     const string CONST_MENU_TEXT = "Enter a choice: \n1: Create a new heap H. Displays H\n2: Enter single element into heap H. Displays H\n3: Pop an elemeny from H. Displays H\n4: Do simulation\n5: Repeat simulation with developed algorithm";
     public GameObject[] nodeArray;
     public List<GameObject> temp;
+    private int[] intValues;
     // Use this for initialization
 	void Start () {
         _inMainMenu = true;
@@ -64,6 +65,7 @@ public class EventManager : MonoBehaviour {
     }
     IEnumerator MainMenu()
     {
+        string s = null;
         foreach (GameObject obj in nodeArray)
             obj.SetActive(false);
         mainMenuInputField.gameObject.SetActive(false);
@@ -84,9 +86,9 @@ public class EventManager : MonoBehaviour {
                 }
                 else
                 {
-                    string s = nonMainMenuUserInput;
+                    s = nonMainMenuUserInput;
                     string[] values = s.Split(',');
-                    int[] intValues = new int[values.Length+1];
+                    intValues = new int[values.Length+1];
                     for (int i = 0; i < values.Length; i++)
                     {
                         intValues[i + 1] = Convert.ToInt32(values[i]);
@@ -101,15 +103,15 @@ public class EventManager : MonoBehaviour {
                 //yield return new WaitForSeconds(2);
                 break;
             case "2":
-                {
-                    menuText.text = CONST_MENU_TEXT + "\n\nYou chose to enter a new element. Enter your element below.";
-                    nonMainMenuInputField.placeholder.GetComponent<Text>().text = "Enter your element";
-                    while (nonMainMenuUserInput == null)
-                        yield return new WaitForSeconds(0.1f);
-                    H.insert(Convert.ToInt32(nonMainMenuUserInput));
-                    H.printHeap();
-                    printHeapToBranchUI();
-                }
+                menuText.text = CONST_MENU_TEXT + "\n\nEnter your element below. A tree will be shown with your new input";
+                nonMainMenuInputField.placeholder.GetComponent<Text>().text = "Enter your element...";
+                while (nonMainMenuUserInput == null)
+                    yield return new WaitForSeconds(0.1f);
+                s = nonMainMenuUserInput;
+                H.insert(Convert.ToInt32(s));
+                H.printHeap();
+                outputText.text = H.ToString();
+                printHeapToBranchUI();
                 break;
             case "3":
                 break;
