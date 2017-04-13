@@ -3,39 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MinHeap{
-
-    int[] array = null;
+    List<int> array;
+    //int[] array = null;
     int load;
 
     public MinHeap()
     {
         load = 0;
-        array = new int[load];
+        //array = new int[load];
+        array = new List<int>();
     }
     public MinHeap(int l)
     {
         load = l;
-        array = new int[load];
+        //array = new int[load];
+        array = new List<int>(load);
     }
-    public MinHeap(int l,int[] a)
+    //public MinHeap(int l,int[] a)
+    //{
+    //    load = l;
+    //    array = a;
+    //}
+    public MinHeap(int l, List<int> a)
     {
         load = l;
         array = a;
     }
-    // Use this for initialization
-    //void Start () {
-
-    //}
-
-    // Update is called once per frame
-    //void Update () {
-
-    //}
     public int pop()
     {
         int data = array[1];
         array[1] = array[load--];
         percolateDown(1);
+
+        array.RemoveAt(load+1);
         return data;
     }
     //Percolate down the tree the object located at array[index].
@@ -62,12 +62,19 @@ public class MinHeap{
     public void insert(int obj)
     {
         //percolate up
+        load++;
+        array.Add(obj);
         int hole = load; //number of elements in heap
         for (; hole > 1 && obj.CompareTo(array[hole / 2]) < 0; hole /= 2)
             array[hole] = array[hole / 2];
         array[hole] = obj;
+
     }
-    public int[] getArray()
+    //public int[] getArray()
+    //{
+    //    return array;
+    //}
+    public List<int> getArray()
     {
         return array;
     }

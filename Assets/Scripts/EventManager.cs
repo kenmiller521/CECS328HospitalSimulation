@@ -14,7 +14,8 @@ public class EventManager : MonoBehaviour {
     const string CONST_MENU_TEXT = "Enter a choice: \n1: Create a new heap H. Displays H\n2: Enter single element into heap H. Displays H\n3: Pop an elemeny from H. Displays H\n4: Do simulation\n5: Repeat simulation with developed algorithm";
     public GameObject[] nodeArray;
     public List<GameObject> temp;
-    private int[] intValues;
+    private List<int> intValues;
+    //private int[] intValues;
     // Use this for initialization
 	void Start () {
         _inMainMenu = true;
@@ -88,13 +89,16 @@ public class EventManager : MonoBehaviour {
                 {
                     s = nonMainMenuUserInput;
                     string[] values = s.Split(',');
-                    intValues = new int[values.Length+1];
+                    //intValues = new int[values.Length+1];
+                    intValues = new List<int>();
+                    intValues.Add(Int32.MaxValue);
                     for (int i = 0; i < values.Length; i++)
                     {
-                        intValues[i + 1] = Convert.ToInt32(values[i]);
+                        intValues.Add(Convert.ToInt32(values[i]));
+                        //intValues[i + 1] = Convert.ToInt32(values[i]);
                     }
-                    intValues[0] = Int32.MaxValue;
-                    H = new MinHeap(intValues.Length-1, intValues);
+                    //intValues[0] = Int32.MaxValue;
+                    H = new MinHeap(intValues.Count()-1, intValues);
                     H.buildHeap();
                     H.printHeap();
                     outputText.text = H.ToString();
@@ -114,6 +118,11 @@ public class EventManager : MonoBehaviour {
                 printHeapToBranchUI();
                 break;
             case "3":
+                menuText.text = CONST_MENU_TEXT + "\n\nYou have chosen to pop an element. Your tree is to the right ->";
+                H.pop();
+                H.printHeap();
+                outputText.text = H.ToString();
+                printHeapToBranchUI();
                 break;
             case "4":
                 break;
@@ -130,8 +139,8 @@ public class EventManager : MonoBehaviour {
         //set everything to inactive
         foreach (GameObject obj in nodeArray)
             obj.SetActive(false);
-        int[] a = H.getArray();
-        for(int i = 1; i < a.Length; i++)
+        List<int> a = H.getArray();
+        for(int i = 1; i < a.Count(); i++)
         {
             nodeArray[i-1].SetActive(true);
             nodeArray[i-1].GetComponentInChildren<Text>().text = a[i].ToString();
