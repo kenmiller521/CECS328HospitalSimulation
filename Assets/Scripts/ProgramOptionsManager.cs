@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EventManager : MonoBehaviour {
+public class ProgramOptionsManager : MonoBehaviour {
     private bool _inMainMenu;
     private MinHeap H;
     public InputField mainMenuInputField,nonMainMenuInputField;

@@ -69,7 +69,8 @@ public class MinHeap{
             array[hole] = array[hole / 2];
         array[hole] = obj;
 
-    }
+    }
+
     //public int[] getArray()
     //{
     //    return array;
