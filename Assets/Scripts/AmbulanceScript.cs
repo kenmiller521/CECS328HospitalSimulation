@@ -6,6 +6,7 @@ public class AmbulanceScript : MonoBehaviour {
     private const int NUMB_OF_PATIENTS = 2;
     public GameObject hospital;
     public GameObject patient1, patient2;
+    private List<GameObject> victimList;
 	// Use this for initialization
 	void Start () {
         patient1 = null;
