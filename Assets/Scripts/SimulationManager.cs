@@ -6,8 +6,12 @@ public class SimulationManager : MonoBehaviour {
     private EventMinHeap EMH;
     public GameObject victim;
     public List<GameObject> victimList;
+    public List<GameObject> ambulanceList;
+    public float simulationStep;
+    private int victimCount;
 	// Use this for initialization
 	void Start () {
+        victimCount = 1;
         EMH = new EventMinHeap();
         victimList = new List<GameObject>();
         createVictim(0, 50, 55, 35);
@@ -40,6 +44,7 @@ public class SimulationManager : MonoBehaviour {
         createVictim(27, 65, 57, 32);
         createVictim(28, 63, 70, 43);
         createVictim(29, 65, 56, 31);
+        initializeAmbulanceSeek();
     }
 
     // Update is called once per frame
@@ -53,5 +58,28 @@ public class SimulationManager : MonoBehaviour {
         victim.GetComponent<VictimScript>().setVictimStats(numb, x, y, survTime);
         victim = (GameObject)Instantiate(victim, new Vector3(x,y,0), Quaternion.identity);
         victimList.Add(victim);
+        victim.GetComponent<VictimScript>().simulationManager = this;
+        victim.name = "Victim" + victimCount;
+        victimCount++;
+    }
+    //This function, called in start, initializes the greedy algorithm in each ambulance to find the best patients
+    private void initializeAmbulanceSeek()
+    {
+        StartCoroutine(AmbulanceSeek());   
+    }
+    IEnumerator AmbulanceSeek()
+    {
+        foreach(GameObject obj in ambulanceList)
+        {
+            AmbulanceScript ambScript = obj.GetComponent<AmbulanceScript>();
+            ambScript.seekVictim();
+            while (ambScript.headingToVictim == false)
+                yield return new WaitForSeconds(0.1f);
+        }
+        yield return null;
+    }
+    public List<GameObject> getVictimList()
+    {
+        return victimList;
     }
 }
