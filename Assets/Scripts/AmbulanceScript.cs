@@ -11,8 +11,9 @@ public class AmbulanceScript : MonoBehaviour {
     private float simulationStep;
     private float timer;
     private const int MOVE_ONE_BLOCK_STEP = 1;
-    private const int LOAD_VICTION_STEP = 3;
-    private const int UNLOAD_VICTION_STEP = 1;
+    private const int LOAD_VICTIM_STEP = 3;
+    private const int UNLOAD_VICTIM_STEP = 1;
+    private int loadStepCounter = LOAD_VICTIM_STEP;
     public bool headingToVictim, headingToHospital;
     // Use this for initialization
     void Start () {
@@ -28,7 +29,79 @@ public class AmbulanceScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        timer += Time.deltaTime;
+        if(timer > simulationStep)
+        {
+            timer = 0;
+            if(victim1 != null || victim2!= null)
+            {
+                if (victim1.GetComponent<VictimScript>().isPickedUp == false)
+                {
+                    headingToVictim = true;
+                    headingToHospital = false;
+                    //If the ambulance is on top of the victim, pick up the victim
+                    if (victim1.transform.position == transform.position)
+                    {
+                        loadStepCounter--;
+                        Debug.Log(loadStepCounter);
+                        if(loadStepCounter == 0)
+                        {
+                            victim1.GetComponent<VictimScript>().isPickedUp = true;
+                            victim1.transform.parent = gameObject.transform;
+                            loadStepCounter = LOAD_VICTIM_STEP;
+                        }
+                        
+                    }
+                        
+                    else if (victim1.transform.position.x > transform.position.x)
+                        transform.position = new Vector3(transform.position.x + 1, transform.position.y, 0);
+                    else if (victim1.transform.position.x < transform.position.x)
+                        transform.position = new Vector3(transform.position.x - 1, transform.position.y, 0);
+                    else if (victim1.transform.position.y > transform.position.y)
+                        transform.position = new Vector3(transform.position.x, transform.position.y + 1, 0);
+                    else if (victim1.transform.position.y < transform.position.y)
+                        transform.position = new Vector3(transform.position.x, transform.position.y - 1, 0);
+                }
+                else if(victim2.GetComponent<VictimScript>().isPickedUp == false)
+                {
+                    headingToVictim = true;
+                    headingToHospital = false;
+                    if (victim2.transform.position == transform.position)
+                    {
+                        loadStepCounter--;
+                        if (loadStepCounter < 0)
+                        {
+                            victim2.GetComponent<VictimScript>().isPickedUp = true;
+                            victim2.transform.parent = gameObject.transform;
+                            loadStepCounter = LOAD_VICTIM_STEP;
+                        }
+                    }
+                    else if (victim2.transform.position.x > transform.position.x)
+                        transform.position = new Vector3(transform.position.x + 1, transform.position.y, 0);
+                    else if (victim2.transform.position.x < transform.position.x)
+                        transform.position = new Vector3(transform.position.x - 1, transform.position.y, 0);
+                    else if (victim2.transform.position.y > transform.position.y)
+                        transform.position = new Vector3(transform.position.x, transform.position.y + 1, 0);
+                    else if (victim2.transform.position.y < transform.position.y)
+                        transform.position = new Vector3(transform.position.x, transform.position.y - 1, 0);
+                }
+                //else if both victims are picked up, drive back to the hospital
+                else
+                {
+                    headingToHospital = true;
+                    headingToVictim = false;
+                    if (hospital.transform.position.x > transform.position.x)
+                        transform.position = new Vector3(transform.position.x + 1, transform.position.y, 0);
+                    else if (hospital.transform.position.x < transform.position.x)
+                        transform.position = new Vector3(transform.position.x - 1, transform.position.y, 0);
+                    else if (hospital.transform.position.y > transform.position.y)
+                        transform.position = new Vector3(transform.position.x, transform.position.y + 1, 0);
+                    else if (hospital.transform.position.y < transform.position.y)
+                        transform.position = new Vector3(transform.position.x, transform.position.y - 1, 0);
+                }
+            }
+            
+        }
 	}
     public void pickUpVictim(GameObject v)
     {

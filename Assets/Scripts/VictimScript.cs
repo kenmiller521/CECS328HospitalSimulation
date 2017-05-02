@@ -5,28 +5,38 @@ using UnityEngine;
 public class VictimScript : MonoBehaviour {
     public Vector3 position;
     public bool isAlive;
+    public bool isPickedUp;
     public GameObject ambulanceToPickUpVictim;
     public int survivalTime;
     public int victimNumber;
     public SimulationManager simulationManager;
-    private float simulationStep;
+    public float simulationStep;
     private float timer;
+    public float currentStep;
     public VictimScript(int victimNum, int x, int y, int survTime)
     {
         victimNumber = victimNum;
         position = new Vector3(x, y, 0);
         survivalTime = survTime;
-        simulationStep = simulationManager.simulationStep;
+        
     }
 	// Use this for initialization
 	void Start () {
-		
-	}
+        isAlive = true;
+        simulationStep = simulationManager.simulationStep;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        timer += Time.deltaTime;
+        if (timer > simulationStep)
+        {
+            timer = 0;
+            currentStep++;
+        }
+        if (currentStep >= survivalTime)
+            isAlive = false;
+    }
     public void setVictimStats(int victimNum, int x, int y, int survTime)
     {
         victimNumber = victimNum;
