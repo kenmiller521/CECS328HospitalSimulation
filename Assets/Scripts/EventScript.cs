@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class EventScript : MonoBehaviour, IComparable<EventScript>
 {
-    public int victimNumber;
-    public Transform position;
-    public int survivalTime;
+    public int time;
+    public string eventType;
+    public string ambulanceName;
+    public string description;
+    public string victimName;
 	// Use this for initialization
 	void Start () {
 		
@@ -17,21 +19,37 @@ public class EventScript : MonoBehaviour, IComparable<EventScript>
 	void Update () {
 		
 	}
-    public int getVictmNumber()
+    public EventScript(int t, string e, string a, string d, string v)
     {
-        return victimNumber;
+        time = t;
+        eventType = e;
+        ambulanceName = a;
+        description = d;
+        victimName = v;
     }
-    public Transform getPosition()
+    public int getTime()
     {
-        return position;
+        return time;
     }
-    public int getSurvivalTime()
+    public string getEventType()
     {
-        return survivalTime;
+        return eventType;
+    }
+    public string getAmbulanceName()
+    {
+        return ambulanceName;
+    }
+    public string getDescription()
+    {
+        return description;
+    }
+    public string getVictimName()
+    {
+        return victimName;
     }
 
     public int CompareTo(EventScript other)
     {
-        return this.victimNumber.CompareTo(other.victimNumber);
+        return this.time.CompareTo(other.time);
     }
 }

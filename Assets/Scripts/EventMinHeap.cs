@@ -11,6 +11,7 @@ public class EventMinHeap{
     {
         load = 0;
         eventArray = new List<EventScript>();
+        eventArray.Add(new EventScript(Int32.MaxValue, " INITIALIZE ", " INITIALIZE ", " INITIALIZE ", " INITIALIZE "));
     }
     public EventMinHeap(int l)
     {
@@ -88,7 +89,7 @@ public class EventMinHeap{
         {
             for (int i = 0; i < load + 1; i++)
             {
-                if (eventArray[i].getVictmNumber() == int.MaxValue)
+                if (eventArray[i].getTime() == int.MaxValue)
                     Debug.Log("null");
                 else
                     Debug.Log(eventArray[i]);
@@ -105,7 +106,7 @@ public class EventMinHeap{
         {
             for (int i = 0; i < load + 1; i++)
             {
-                if (eventArray[i].getVictmNumber() != int.MaxValue)
+                if (eventArray[i].getTime() != int.MaxValue)
                     str = str + eventArray[i].ToString() + ",";
                 //Debug.Log(array[i]);
             }

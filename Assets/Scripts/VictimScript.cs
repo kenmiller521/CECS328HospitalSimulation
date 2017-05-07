@@ -6,6 +6,7 @@ public class VictimScript : MonoBehaviour {
     public Vector3 position;
     public bool isAlive;
     public bool isPickedUp;
+    public bool isSaved;
     public GameObject ambulanceToPickUpVictim;
     public int survivalTime;
     public int victimNumber;
@@ -13,6 +14,12 @@ public class VictimScript : MonoBehaviour {
     public float simulationStep;
     private float timer;
     public float currentStep;
+    public GameObject victimDeadX;
+    public GameObject closestHospital;
+    public GameObject[] hospitalsArray;
+    private float hospitalDistance;
+    private float hospitalShortestDistance;
+
     public VictimScript(int victimNum, int x, int y, int survTime)
     {
         victimNumber = victimNum;
@@ -20,22 +27,56 @@ public class VictimScript : MonoBehaviour {
         survivalTime = survTime;
         
     }
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
+        hospitalsArray = GameObject.FindGameObjectsWithTag("Hospital");
+        hospitalShortestDistance = 100;
+        hospitalDistance = 101;
+        foreach (GameObject hosp in hospitalsArray)
+        {
+            hospitalDistance = Vector3.Distance(hosp.transform.position, transform.position);
+            if (hospitalDistance < hospitalShortestDistance)
+            {
+                hospitalShortestDistance = hospitalDistance;
+                closestHospital = hosp;
+            }
+        }
+    }
+    // Use this for initialization
+    void Start () {
         isAlive = true;
+        isSaved = false;
         simulationStep = simulationManager.simulationStep;
+        //hospitalsArray = GameObject.FindGameObjectsWithTag("Hospital");
+        
     }
 	
 	// Update is called once per frame
 	void Update () {
-        timer += Time.deltaTime;
-        if (timer > simulationStep)
+        if(simulationManager.initialSeekAlgorithmDone)
         {
-            timer = 0;
-            currentStep++;
+            //If the victim is NOT saved
+            if(!isSaved)
+            {
+                timer += Time.deltaTime;
+                if (timer > simulationStep)
+                {
+                    timer = 0;
+                    currentStep++;
+                }
+                if (currentStep >= survivalTime && isAlive)
+                {
+                    isAlive = false;
+                    //TODO: ADD TO HEAP FOR VICTIM DEATH
+                    //Destroy(this.gameObject);
+                    GameObject X = Instantiate(victimDeadX, this.transform.position, Quaternion.identity);
+                    X.transform.parent = this.transform;
+                }
+            }
+            
         }
-        if (currentStep >= survivalTime)
-            isAlive = false;
+        
+            
     }
     public void setVictimStats(int victimNum, int x, int y, int survTime)
     {

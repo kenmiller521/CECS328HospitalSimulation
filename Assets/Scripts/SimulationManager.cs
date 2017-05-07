@@ -9,6 +9,7 @@ public class SimulationManager : MonoBehaviour {
     public List<GameObject> ambulanceList;
     public float simulationStep;
     private int victimCount;
+    public bool initialSeekAlgorithmDone;
 	// Use this for initialization
 	void Start () {
         victimCount = 1;
@@ -62,7 +63,7 @@ public class SimulationManager : MonoBehaviour {
         victim.name = "Victim" + victimCount;
         victimCount++;
     }
-    //This function, called in start, initializes the greedy algorithm in each ambulance to find the best patients
+    //This function, called in start, initializes the greedy algorithm in each ambulance to find the best victims
     private void initializeAmbulanceSeek()
     {
         StartCoroutine(AmbulanceSeek());   
@@ -73,13 +74,23 @@ public class SimulationManager : MonoBehaviour {
         {
             AmbulanceScript ambScript = obj.GetComponent<AmbulanceScript>();
             ambScript.seekVictim();
+            Debug.Log(ambScript.name + " seeking");
             while (ambScript.headingToVictim == false)
-                yield return new WaitForSeconds(0.1f);
+            {
+                Debug.Log(ambScript.name + " seeking");
+                yield return null;
+            }
+            
         }
+        initialSeekAlgorithmDone = true;
         yield return null;
     }
     public List<GameObject> getVictimList()
     {
         return victimList;
+    }
+    public void addEvent(EventScript es)
+    {
+        EMH.insert(es);
     }
 }
