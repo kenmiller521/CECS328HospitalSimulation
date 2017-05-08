@@ -125,7 +125,7 @@ public class AmbulanceScript : MonoBehaviour {
                                 victim1.GetComponent<VictimScript>().isPickedUp = true;
                                 victim1.transform.parent = gameObject.transform;
                                 loadStepCounter = LOAD_VICTIM_STEP;
-                                EventScript es = new EventScript(currentStep + LOAD_VICTIM_STEP, " RescuedVictim ", gameObject.name, " rescued ", victim1.name);
+                                EventScript es = new EventScript(currentStep - LOAD_VICTIM_STEP, " RescuedVictim ", gameObject.name, " rescued ", victim1.name);
                                 simulationManager.addEvent(es);
                                 //Make an event and add it to the heap
                                 es = new EventScript(currentStep, " LoadVictim ", gameObject.name, " loaded ", victim1.name);
@@ -158,7 +158,7 @@ public class AmbulanceScript : MonoBehaviour {
                                     victim2.GetComponent<VictimScript>().isPickedUp = true;
                                     victim2.transform.parent = gameObject.transform;
                                     loadStepCounter = LOAD_VICTIM_STEP;
-                                    EventScript es = new EventScript(currentStep + LOAD_VICTIM_STEP, " RescuedVictim ", gameObject.name, " rescued ", victim2.name);
+                                    EventScript es = new EventScript(currentStep - LOAD_VICTIM_STEP, " RescuedVictim ", gameObject.name, " rescued ", victim2.name);
                                     simulationManager.addEvent(es);
                                     es = new EventScript(currentStep, " LoadVictim ", gameObject.name, " loaded ", victim2.name);
                                     simulationManager.addEvent(es);
