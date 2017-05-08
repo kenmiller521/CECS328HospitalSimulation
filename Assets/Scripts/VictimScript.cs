@@ -13,7 +13,7 @@ public class VictimScript : MonoBehaviour {
     public SimulationManager simulationManager;
     public float simulationStep;
     private float timer;
-    public float currentStep;
+    public int currentStep;
     public GameObject victimDeadX;
     public GameObject closestHospital;
     public GameObject[] hospitalsArray;
@@ -68,6 +68,8 @@ public class VictimScript : MonoBehaviour {
                 {
                     isAlive = false;
                     //TODO: ADD TO HEAP FOR VICTIM DEATH
+                    EventScript es = new EventScript(currentStep, " VictimDeath ", this.name, " - ", " - ");
+                    simulationManager.addEvent(es);
                     //Destroy(this.gameObject);
                     GameObject X = Instantiate(victimDeadX, this.transform.position, Quaternion.identity);
                     X.transform.parent = this.transform;

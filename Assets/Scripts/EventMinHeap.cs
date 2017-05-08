@@ -6,7 +6,8 @@ using UnityEngine;
 public class EventMinHeap{
     List<EventScript> eventArray;
     int load;
-
+    private List<string> eventStringList;
+    private string[] lines;
     public EventMinHeap()
     {
         load = 0;
@@ -114,6 +115,26 @@ public class EventMinHeap{
         else
             return "EMPTY";
         return str;
+    }
+    public void writeToFile()
+    {
+        eventStringList = new List<string>();
+        if (load != 0)
+        {
+            for (int i = 1; i < load + 1; i++)
+            {
+                eventStringList.Add(eventArray[i].getEventData());
+                lines = eventStringList.ToArray();
+                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\WriteLines.txt", lines);
+                //Debug.Log(eventArray[i].toStringgggg());
+                //if (eventArray[i].getTime() == int.MaxValue)
+                //    Debug.Log("null");
+                //else
+                //    Debug.Log(eventArray[i]);
+            }
+        }
+        //else
+           // Debug.Log("The Heap is empty.");
     }
     
 }

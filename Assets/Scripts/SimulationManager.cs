@@ -8,8 +8,13 @@ public class SimulationManager : MonoBehaviour {
     public List<GameObject> victimList;
     public List<GameObject> ambulanceList;
     public float simulationStep;
+    public int stepToFinish;
     private int victimCount;
+    public int currentStep;
+    private float timer;
     public bool initialSeekAlgorithmDone;
+    private bool simulationDone;
+    
 	// Use this for initialization
 	void Start () {
         victimCount = 1;
@@ -46,11 +51,29 @@ public class SimulationManager : MonoBehaviour {
         createVictim(28, 63, 70, 43);
         createVictim(29, 65, 56, 31);
         initializeAmbulanceSeek();
+        simulationDone = false;
     }
 
     // Update is called once per frame
     void Update () {
-		
+	    if(initialSeekAlgorithmDone)
+        {
+            timer += Time.deltaTime;
+            if(timer > simulationStep)
+            {
+                timer = 0;
+                currentStep++;
+                if (currentStep == stepToFinish)
+                {
+                    if(simulationDone == false)
+                    {
+                        simulationDone = true;
+                        //TODO: Write to file
+                        StartCoroutine(WriteToFile());
+                    }
+                }
+            }
+        }	
 	}
 
     public void createVictim(int numb, int x, int y, int survTime)
@@ -92,5 +115,10 @@ public class SimulationManager : MonoBehaviour {
     public void addEvent(EventScript es)
     {
         EMH.insert(es);
+    }
+    IEnumerator WriteToFile()
+    {
+        EMH.writeToFile();
+        yield return null;
     }
 }
