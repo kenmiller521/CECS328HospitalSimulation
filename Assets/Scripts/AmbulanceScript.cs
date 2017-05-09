@@ -450,6 +450,16 @@ public class AmbulanceScript : MonoBehaviour {
         }
         
     }
+    /// <summary>
+    /// This is my algorithm. It consists of a few functions namely seekVictimMyAlgorithm(), IncreaseCollider(), OnTriggerEnter2D().
+    /// The ambulances and victims have a circle collider attached to them. The way my algorithm works is that for each ambulance, one at a time,
+    /// it continuously increases the radius of the collider. When the collider touches the collider of a victim, OnTriggerEnter2D is called automatically
+    /// and it then proceeds to calculate if the victim is rescueable. After it has decided to rescue the first victim the circle collider continues to increase
+    /// until either a second victim is rescueable or if the collider has exhausted all victims in the list. The interaction with the circle colliders reduces the need
+    /// for an iteration through the entire list of victims because it stops looking after it finds two suitable victims.
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public void seekVictimMyAlgorithm()
     {
         GameObject[] victimArray = GameObject.FindGameObjectsWithTag("Victim");
@@ -457,6 +467,7 @@ public class AmbulanceScript : MonoBehaviour {
             mySeekVictimList.Add(obj); 
         StartCoroutine(IncreaseCollider());        
     }
+    
     IEnumerator IncreaseCollider()
     {
         while (victim1 == null && mySeekVictimList.Count != 0)
