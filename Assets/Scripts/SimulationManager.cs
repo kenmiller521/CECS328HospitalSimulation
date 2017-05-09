@@ -15,9 +15,10 @@ public class SimulationManager : MonoBehaviour {
     private float timer;
     public bool initialSeekAlgorithmDone;
     private bool simulationDone;
-    
+    private bool algorithmChosen;
 	// Use this for initialization
 	void Start () {
+        algorithmChosen = false;
         victimCount = 1;
         EMH = new EventMinHeap();
         EMHVictim = new EventMinHeap();
@@ -52,7 +53,8 @@ public class SimulationManager : MonoBehaviour {
         createVictim(27, 65, 57, 32);
         createVictim(28, 63, 70, 43);
         createVictim(29, 65, 56, 31);
-        initializeAmbulanceSeek();
+        //initializeAmbulanceSeek();
+        StartCoroutine(ChooseAlgorithm());
         simulationDone = false;
     }
 
@@ -96,11 +98,16 @@ public class SimulationManager : MonoBehaviour {
     {
         StartCoroutine(AmbulanceSeek());   
     }
+    private void initializeAmbulanceSeekMyAlgorithm()
+    {
+        StartCoroutine(AmbulanceSeekMyAlgorithm());
+    }
     IEnumerator AmbulanceSeek()
     {
         foreach(GameObject obj in ambulanceList)
         {
             AmbulanceScript ambScript = obj.GetComponent<AmbulanceScript>();
+            ambScript.usingMyAlgorithm = false;
             ambScript.seekVictim();
             Debug.Log(ambScript.name + " seeking");
             while (ambScript.headingToVictim == false)
@@ -109,6 +116,24 @@ public class SimulationManager : MonoBehaviour {
                 yield return null;
             }
             
+        }
+        initialSeekAlgorithmDone = true;
+        yield return null;
+    }
+    IEnumerator AmbulanceSeekMyAlgorithm()
+    {
+        foreach (GameObject obj in ambulanceList)
+        {
+            AmbulanceScript ambScript = obj.GetComponent<AmbulanceScript>();
+            ambScript.usingMyAlgorithm = true;
+            ambScript.seekVictimMyAlgorithm();
+            Debug.Log(ambScript.name + " seeking");
+            while (ambScript.seekFinished == false)
+            {
+                Debug.Log(ambScript.name + " seeking");
+                yield return null;
+            }
+
         }
         initialSeekAlgorithmDone = true;
         yield return null;
@@ -133,6 +158,27 @@ public class SimulationManager : MonoBehaviour {
     IEnumerator WriteToFileVictim()
     {
         EMHVictim.writeToFile();
+        yield return null;
+    }
+
+    IEnumerator ChooseAlgorithm()
+    {
+        while(algorithmChosen == false)
+        {
+            //regular algorithm
+            if(Input.GetKeyDown(KeyCode.Z))
+            {
+                initializeAmbulanceSeek();
+                algorithmChosen = true;
+            }
+            //my algorithm
+            else if(Input.GetKeyDown(KeyCode.X))
+            {
+                initializeAmbulanceSeekMyAlgorithm();
+                algorithmChosen = true;
+            }
+            yield return null;
+        }
         yield return null;
     }
 }

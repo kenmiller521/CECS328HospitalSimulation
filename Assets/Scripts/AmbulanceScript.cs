@@ -25,6 +25,17 @@ public class AmbulanceScript : MonoBehaviour {
     private bool firstTimeLeavingHospital = true;
     private EventMinHeap EMHAmbulance = new EventMinHeap();
     private bool printedToFile;
+
+
+    //Variables specific to my algorithm
+    private bool stopIncreasingCollider;
+    public bool seekFinished;
+    public List<GameObject> mySeekVictimList;
+    private CircleCollider2D cc2d;
+    private int totalNumberOfStepsMyAlgorithm;
+    private bool victim1WhileLoopStop;
+    private bool victim2WhileLoopStop;
+    public bool usingMyAlgorithm;
     // Use this for initialization
     void Start () {
         
@@ -41,6 +52,15 @@ public class AmbulanceScript : MonoBehaviour {
         firstTimeLeavingHospital = true;
         printedToFile = false;
         EMHAmbulance = new EventMinHeap();
+
+
+        //Initialization step for variable for my algorithm
+        stopIncreasingCollider = false;
+        seekFinished = false;
+        cc2d = GetComponent<CircleCollider2D>();
+        totalNumberOfStepsMyAlgorithm = 0;
+        victim1WhileLoopStop = false;
+        victim2WhileLoopStop = false;
     }
 	
 	// Update is called once per frame
@@ -57,70 +77,74 @@ public class AmbulanceScript : MonoBehaviour {
                     printedToFile = true;
                     EMHAmbulance.writeToFileAmbulance(gameObject.name);
                 }
-                if(hospital.transform.position == transform.position && headingToHospital == true)
-                {
-                    if(addedArriveHospitalEvent == false)
+                //if(headingToHospital == true)
+                //{
+                    if (hospital.transform.position == transform.position && headingToHospital == true)
                     {
-                        EventScript es = new EventScript(currentStep, " ArriveHospital ", gameObject.name, " arrived ", hospital.name);
-                        simulationManager.addEvent(es);
-                        EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Arriving ", hospital.name);
-                        EMHAmbulance.insert(eva);
-                        addedArriveHospitalEvent = true;
-                    }
-                    //If the hospital locations are not full
-                    if(!hospitalScript.allLocationsFull)
-                    {
-                        //Take up a spot by incrementing the counter
-                        hospitalScript.numberOfSpotsTaken+=1;
-                        
-                        if (victim2 != null)
+                        if (addedArriveHospitalEvent == false)
                         {
-                            unloadStepcounter--;
-                            if (unloadStepcounter == 0)
-                            {
-                                victim1.GetComponent<VictimScript>().isSaved = true;
-                                victim1.transform.parent = hospital.transform;
-                                EventScript es = new EventScript(currentStep, " UnloadedVictim ", gameObject.name, " unloaded ", victim1.name);
-                                simulationManager.addEvent(es);
-                                victim1 = null;
-                            }
-                            if (unloadStepcounter == -1)
-                            {
-                                victim2.GetComponent<VictimScript>().isSaved = true;
-                                victim2.transform.parent = hospital.transform;
-                                EventScript es = new EventScript(currentStep, " UnloadedVictim ", gameObject.name, " unloaded ", victim2.name);
-                                simulationManager.addEvent(es);
-                                victim2 = null;
-                                //decrement the counter;
-                                hospitalScript.numberOfSpotsTaken-=1;
-                                addedArriveHospitalEvent = false;
-                                headingToHospital = false;
-                                seekOnce = false;
-                                unloadStepcounter = UNLOAD_VICTIM_STEP;
-                            }
+                            EventScript es = new EventScript(currentStep, " ArriveHospital ", gameObject.name, " arrived ", hospital.name);
+                            simulationManager.addEvent(es);
+                            EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Arriving ", hospital.name);
+                            EMHAmbulance.insert(eva);
+                            addedArriveHospitalEvent = true;
                         }
-                        else if (victim1 != null)
+                        //If the hospital locations are not full
+                        if (!hospitalScript.allLocationsFull)
                         {
-                            unloadStepcounter--;
-                            if (unloadStepcounter == 0)
-                            {
-                                victim1.GetComponent<VictimScript>().isSaved = true;
-                                victim1.transform.parent = hospital.transform;
-                                EventScript es = new EventScript(currentStep, " UnloadedVictim ", gameObject.name, " unloaded ", victim1.name);
-                                simulationManager.addEvent(es);
-                                victim1 = null;
-                                //decrement the counter;
-                                hospitalScript.numberOfSpotsTaken-=1;
-                                addedArriveHospitalEvent = false;
-                                headingToHospital = false;
-                                seekOnce = false;
-                                unloadStepcounter = UNLOAD_VICTIM_STEP;
+                            //Take up a spot by incrementing the counter
+                            hospitalScript.numberOfSpotsTaken += 1;
 
+                            if (victim2 != null)
+                            {
+                                unloadStepcounter--;
+                                if (unloadStepcounter == 0)
+                                {
+                                    victim1.GetComponent<VictimScript>().isSaved = true;
+                                    victim1.transform.parent = hospital.transform;
+                                    EventScript es = new EventScript(currentStep, " UnloadedVictim ", gameObject.name, " unloaded ", victim1.name);
+                                    simulationManager.addEvent(es);
+                                    victim1 = null;
+                                }
+                                if (unloadStepcounter == -1)
+                                {
+                                    victim2.GetComponent<VictimScript>().isSaved = true;
+                                    victim2.transform.parent = hospital.transform;
+                                    EventScript es = new EventScript(currentStep, " UnloadedVictim ", gameObject.name, " unloaded ", victim2.name);
+                                    simulationManager.addEvent(es);
+                                    victim2 = null;
+                                    //decrement the counter;
+                                    hospitalScript.numberOfSpotsTaken -= 1;
+                                    addedArriveHospitalEvent = false;
+                                    headingToHospital = false;
+                                    seekOnce = false;
+                                    unloadStepcounter = UNLOAD_VICTIM_STEP;
+                                }
+                            }
+                            else if (victim1 != null)
+                            {
+                                unloadStepcounter--;
+                                if (unloadStepcounter == 0)
+                                {
+                                    victim1.GetComponent<VictimScript>().isSaved = true;
+                                    victim1.transform.parent = hospital.transform;
+                                    EventScript es = new EventScript(currentStep, " UnloadedVictim ", gameObject.name, " unloaded ", victim1.name);
+                                    simulationManager.addEvent(es);
+                                    victim1 = null;
+                                    //decrement the counter;
+                                    hospitalScript.numberOfSpotsTaken -= 1;
+                                    addedArriveHospitalEvent = false;
+                                    headingToHospital = false;
+                                    seekOnce = false;
+                                    unloadStepcounter = UNLOAD_VICTIM_STEP;
+
+                                }
                             }
                         }
-                    }
-                    
+
+                    //}
                 }
+                
                 else if (victim1 != null || victim2 != null)
                 {
                     if (victim1.GetComponent<VictimScript>().isPickedUp == false)
@@ -426,4 +450,127 @@ public class AmbulanceScript : MonoBehaviour {
         }
         
     }
+    public void seekVictimMyAlgorithm()
+    {
+        GameObject[] victimArray = GameObject.FindGameObjectsWithTag("Victim");
+        foreach (GameObject obj in victimArray)
+            mySeekVictimList.Add(obj); 
+        StartCoroutine(IncreaseCollider());        
+    }
+    IEnumerator IncreaseCollider()
+    {
+        while (victim1 == null && mySeekVictimList.Count != 0)
+        {
+            cc2d.radius += Time.deltaTime * 1000;
+            yield return null;
+        }
+        while (victim2 == null && mySeekVictimList.Count != 0)
+        {
+            cc2d.radius += Time.deltaTime * 1000;
+            yield return null;
+        }
+        if (victim1 != null)
+        {
+            victim1.GetComponent<VictimScript>().ambulanceToPickUpVictim = this.gameObject;
+            hospital = victim1.GetComponent<VictimScript>().closestHospital;
+            hospitalScript = hospital.GetComponent<HospitalScript>();
+        }
+        if (victim2 != null)
+        {
+            victim2.GetComponent<VictimScript>().ambulanceToPickUpVictim = this.gameObject;
+            hospital = victim2.GetComponent<VictimScript>().closestHospital;
+            hospitalScript = hospital.GetComponent<HospitalScript>();
+        }
+        cc2d.radius = 3.7f;
+        headingToVictim = true;
+        seekFinished = true;
+        yield return null;
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(usingMyAlgorithm == true)
+        {
+            if (collision.gameObject.tag == "Victim")
+            {
+                GameObject victim = collision.gameObject;
+                stopIncreasingCollider = true;
+                mySeekVictimList.Remove(collision.gameObject);
+                //Debug.Log(collision.gameObject.name);
+                //calculate for first victim
+                if (victim1 == null)
+                {
+                    if (victim.GetComponent<VictimScript>().ambulanceToPickUpVictim == null)
+                    {
+                        //X distance for the ambulance to drive to the victim
+                        totalNumberOfStepsMyAlgorithm += (int)Mathf.Abs(victim.transform.position.x - transform.position.x);
+                        //Y distance for the ambulance to drive to the victim
+                        totalNumberOfStepsMyAlgorithm += (int)Mathf.Abs(victim.transform.position.y - transform.position.y);
+                        //find closest hospital from the victim
+                        hospital = victim.GetComponent<VictimScript>().closestHospital;
+                        //X distance for the ambulance to drive to the closest hospital
+                        totalNumberOfStepsMyAlgorithm += (int)Mathf.Abs(hospital.transform.position.x - victim.transform.position.x);
+                        //Y distance for the ambulance to drive to the closest hospital
+                        totalNumberOfStepsMyAlgorithm += (int)Mathf.Abs(hospital.transform.position.y - victim.transform.position.y);
+                        //Add the number of steps to load the victim(3 steps)
+                        totalNumberOfStepsMyAlgorithm += LOAD_VICTIM_STEP;
+                        //Add the number of steps to unload the victim(1 step)
+                        totalNumberOfStepsMyAlgorithm += UNLOAD_VICTIM_STEP;
+                        //If the total number of steps is less than the victim's survival time then the victim will still be alive when ambulance gets to the hospital
+                        if (totalNumberOfStepsMyAlgorithm < (victim.GetComponent<VictimScript>().survivalTime - currentStep))
+                        {
+                            //update the shortest distance
+                            // shortestDistance = distance;
+                            //set victim1 of the ambulance
+                            victim1 = victim;
+                            //victim1TotalNumberOfSteps = totalNumberOfSteps;
+                            // Debug.Log(this.gameObject.name + " - "+ victim.name + " TOTALNUMBOFSTEPS: " + victim1TotalNumberOfSteps);
+
+                        }
+                    }
+                }
+                else if (victim2 == null && mySeekVictimList.Count != 0)
+                {
+                    //set the temp variable for the distance
+                    int totalNumberOfStepsVictim2 = totalNumberOfStepsMyAlgorithm;
+                    //Subtract the x distance to travel for the first victim to the hospital as we need to calculate the new distance from victim2 to its closest hospital
+                    totalNumberOfStepsVictim2 -= (int)Mathf.Abs(hospital.transform.position.x - victim1.transform.position.x);
+                    //Subtract the y distance to travel for the first victim to the hospital as we need to calculate the new distance from victim2 to its closest hospital
+                    totalNumberOfStepsVictim2 -= (int)Mathf.Abs(hospital.transform.position.y - victim1.transform.position.y);
+                    //At this point the total number of steps should be from the ambulance's initial position to victim 1, + the time to load + the time to unload
+                    if (victim.GetComponent<VictimScript>().ambulanceToPickUpVictim == null)
+                    {
+                        //X distance for the ambulance to drive to victim2 from victim1
+                        totalNumberOfStepsVictim2 += (int)Mathf.Abs(victim.transform.position.x - victim1.transform.position.x);
+                        //Y distance for the ambulance to drive to victim2 from victim1
+                        totalNumberOfStepsVictim2 += (int)Mathf.Abs(victim.transform.position.y - victim1.transform.position.y);
+                        //find closest hospital from the victim
+                        hospital = victim.GetComponent<VictimScript>().closestHospital;
+                        //X distance for the ambulance to drive to the closest hospital
+                        totalNumberOfStepsVictim2 += (int)Mathf.Abs(hospital.transform.position.x - victim.transform.position.x);
+                        //Y distance for the ambulance to drive to the closest hospital
+                        totalNumberOfStepsVictim2 += (int)Mathf.Abs(hospital.transform.position.y - victim.transform.position.y);
+                        //Add the number of steps to load the victim(3 steps)
+                        totalNumberOfStepsVictim2 += LOAD_VICTIM_STEP;
+                        //Add the number of steps to unload the victim(1 step)
+                        totalNumberOfStepsVictim2 += UNLOAD_VICTIM_STEP;
+                        //If the total number of steps is less than the victim's survival time then the victim will still be alive when ambulance gets to the hospital
+                        if (totalNumberOfStepsVictim2 < (victim1.GetComponent<VictimScript>().survivalTime - currentStep))
+                        {
+                            //If the total number of steps is less than the current victim's survival time then ambulane can pick up victim 2
+                            if (totalNumberOfStepsVictim2 < (victim.GetComponent<VictimScript>().survivalTime - currentStep))
+                            {
+                                //set the shortest distance to compare for any future closer victims
+                                victim2 = victim;
+                                //hospital = victim.GetComponent<VictimScript>().closestHospital;
+                                //hospitalScript = hospital.GetComponent<HospitalScript>();
+                            }
+                        }
+                    }
+                }
+                stopIncreasingCollider = false;
+            }
+        }
+        
+    }
+
 }
