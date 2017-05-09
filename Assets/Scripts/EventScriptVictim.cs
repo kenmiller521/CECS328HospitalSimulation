@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class EventScriptVictim : EventScript
 {
-    public string victimName;
+    //public string victimName;
     public Vector2 loc;
     public int survivalTime;
     public bool isSaved;
     int timeRescued;
-    string ambulanceName;
+    //string ambulanceName;
     int timeUnloadedFromAmbulance;
 
     public EventScriptVictim(string v, int x, int y, int survTime, bool saved, int t, string aName, int timeUnloaded)
@@ -37,15 +37,15 @@ public class EventScriptVictim : EventScript
     {
         return this.victimName.CompareTo(other.victimName);
     }
-    public string getEventData()
+    public override string getEventData()
     {
         string str = null;
         if (isSaved)
         {
-            str = victimName + " (" + loc.x + "," + loc.y + ") " + survivalTime + " " + " SAVED " + timeRescued + " " + ambulanceName + " " + timeUnloadedFromAmbulance;
+            str = victimName + " (" + loc.x + "," + loc.y + ") Survival Time:" + survivalTime + " SAVED AT " + timeRescued + " BY " + ambulanceName + " UNLOADED AT " + timeUnloadedFromAmbulance;
         }
         else
-            str = victimName + " (" + loc.x + "," + loc.y + ") " + survivalTime + " " + " NOT SAVED ";
+            str = victimName + " (" + loc.x + "," + loc.y + ") Survival Time:" + survivalTime + " " + " NOT SAVED ";
         //string str = time + " " + eventType + " " + ambulanceName + " " + description + " " + victimName;
         return str;
     }

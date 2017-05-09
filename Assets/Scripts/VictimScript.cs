@@ -72,6 +72,8 @@ public class VictimScript : MonoBehaviour {
                     //TODO: ADD TO HEAP FOR VICTIM DEATH
                     EventScript es = new EventScript(currentStep, " VictimDeath ", this.name, " - ", " - ");
                     simulationManager.addEvent(es);
+                    EventScriptVictim esv = new EventScriptVictim(this.name, (int)position.x, (int)position.y, survivalTime, false, 0, " ", 0);
+                    simulationManager.addEventVictim(esv);
                     //Destroy(this.gameObject);
                     GameObject X = Instantiate(victimDeadX, this.transform.position, Quaternion.identity);
                     X.transform.parent = this.transform;
@@ -81,6 +83,7 @@ public class VictimScript : MonoBehaviour {
             {
                 madeSavedEvent = true;
                 EventScriptVictim es = new EventScriptVictim(this.name, (int)position.x, (int)position.y, survivalTime, true, timeRescued, ambulanceToPickUpVictim.name, currentStep);
+                simulationManager.addEventVictim(es);
                 //EventScript es = new EventScriptVictim(name, LocationInfo, survivalTime, ifSaved, timeRescued, ambulanceThatUnloaded, "unloaded at", time);
 
             }

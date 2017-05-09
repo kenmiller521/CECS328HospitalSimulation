@@ -23,8 +23,11 @@ public class AmbulanceScript : MonoBehaviour {
     private bool seekOnce;
     private bool addedArriveHospitalEvent;
     private bool firstTimeLeavingHospital = true;
+    private EventMinHeap EMHAmbulance = new EventMinHeap();
+    private bool printedToFile;
     // Use this for initialization
     void Start () {
+        
         simulationManager = GameObject.Find("SimulationManager").GetComponent<SimulationManager>();
        // hospitalArray = GameObject.FindGameObjectsWithTag("Hospital");
         simulationStep = simulationManager.simulationStep;
@@ -36,6 +39,8 @@ public class AmbulanceScript : MonoBehaviour {
         currentStep = 0;
         addedArriveHospitalEvent = false;
         firstTimeLeavingHospital = true;
+        printedToFile = false;
+        EMHAmbulance = new EventMinHeap();
     }
 	
 	// Update is called once per frame
@@ -47,12 +52,19 @@ public class AmbulanceScript : MonoBehaviour {
             {
                 timer = 0;
                 currentStep++;
+                if(currentStep == simulationManager.stepToFinish && printedToFile == false)
+                {
+                    printedToFile = true;
+                    EMHAmbulance.writeToFileAmbulance(gameObject.name);
+                }
                 if(hospital.transform.position == transform.position && headingToHospital == true)
                 {
                     if(addedArriveHospitalEvent == false)
                     {
                         EventScript es = new EventScript(currentStep, " ArriveHospital ", gameObject.name, " arrived ", hospital.name);
                         simulationManager.addEvent(es);
+                        EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Arriving ", hospital.name);
+                        EMHAmbulance.insert(eva);
                         addedArriveHospitalEvent = true;
                     }
                     //If the hospital locations are not full
@@ -123,6 +135,7 @@ public class AmbulanceScript : MonoBehaviour {
                             if (loadStepCounter == 0)
                             {
                                 victim1.GetComponent<VictimScript>().isPickedUp = true;
+                                victim1.GetComponent<VictimScript>().timeRescued = currentStep;
                                 victim1.transform.parent = gameObject.transform;
                                 loadStepCounter = LOAD_VICTIM_STEP;
                                 EventScript es = new EventScript(currentStep - LOAD_VICTIM_STEP, " RescuedVictim ", gameObject.name, " rescued ", victim1.name);
@@ -156,6 +169,7 @@ public class AmbulanceScript : MonoBehaviour {
                                 if (loadStepCounter == 0)
                                 {
                                     victim2.GetComponent<VictimScript>().isPickedUp = true;
+                                    victim2.GetComponent<VictimScript>().timeRescued = currentStep;
                                     victim2.transform.parent = gameObject.transform;
                                     loadStepCounter = LOAD_VICTIM_STEP;
                                     EventScript es = new EventScript(currentStep - LOAD_VICTIM_STEP, " RescuedVictim ", gameObject.name, " rescued ", victim2.name);
@@ -376,7 +390,7 @@ public class AmbulanceScript : MonoBehaviour {
             hospital = victim1.GetComponent<VictimScript>().closestHospital;
             hospitalScript = hospital.GetComponent<HospitalScript>();
         }
-            
+
         headingToVictim = true;
         if (firstTimeLeavingHospital == true)
         {
@@ -384,16 +398,22 @@ public class AmbulanceScript : MonoBehaviour {
             {                
                 EventScript eventScr = new EventScript(currentStep, " LeaveHospital ", gameObject.name, " left ", "Austerlitz");
                 simulationManager.addEvent(eventScr);
+                EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Leaving ", "Austerlitz");
+                EMHAmbulance.insert(eva);
             }
             if (gameObject.name.Contains("Past"))
             {
                 EventScript eventScr = new EventScript(currentStep, " LeaveHospital ", gameObject.name, " left ", "Pasteur");
                 simulationManager.addEvent(eventScr);
+                EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Leaving ", "Pasteur");
+                EMHAmbulance.insert(eva);
             }
             if (gameObject.name.Contains("DeGa"))
             {
                 EventScript eventScr = new EventScript(currentStep, " LeaveHospital ", gameObject.name, " left ", "DeGaulle");
                 simulationManager.addEvent(eventScr);
+                EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Leaving ", "DeGaulle");
+                EMHAmbulance.insert(eva);
             }
             firstTimeLeavingHospital = false;
         }
@@ -401,6 +421,8 @@ public class AmbulanceScript : MonoBehaviour {
         {
             EventScript es = new EventScript(currentStep, " LeaveHospital ", gameObject.name, " left ", hospital.name);
             simulationManager.addEvent(es);
+            EventScriptAmbulance eva = new EventScriptAmbulance(currentStep, gameObject.name, " Leaving ", hospital.name);
+            EMHAmbulance.insert(eva);
         }
         
     }

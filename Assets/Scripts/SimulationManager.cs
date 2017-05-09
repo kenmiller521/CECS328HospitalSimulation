@@ -5,7 +5,6 @@ using UnityEngine;
 public class SimulationManager : MonoBehaviour {
     private EventMinHeap EMH;
     private EventMinHeap EMHVictim;
-    private EventMinHeap EMHAmbulance;
     public GameObject victim;
     public List<GameObject> victimList;
     public List<GameObject> ambulanceList;
@@ -22,7 +21,6 @@ public class SimulationManager : MonoBehaviour {
         victimCount = 1;
         EMH = new EventMinHeap();
         EMHVictim = new EventMinHeap();
-        EMHAmbulance = new EventMinHeap();
         victimList = new List<GameObject>();
         createVictim(0, 50, 55, 35);
         createVictim(1, 48, 64, 42);
@@ -73,8 +71,10 @@ public class SimulationManager : MonoBehaviour {
                     {
                         simulationDone = true;
                         //TODO: Write to file
-                        StartCoroutine(WriteToFile());
-                        StartCoroutine(WriteToFileVictim());
+                        EMH.writeToFile();
+                        EMHVictim.writeToFileVictim();
+                        // StartCoroutine(WriteToFile());
+                        //StartCoroutine(WriteToFileVictim());
                     }
                 }
             }
@@ -124,10 +124,6 @@ public class SimulationManager : MonoBehaviour {
     public void addEventVictim(EventScript es)
     {
         EMHVictim.insert(es);
-    }
-    public void addEventAmbulance(EventScript es)
-    {
-        EMHAmbulance.insert(es);
     }
     IEnumerator WriteToFile()
     {

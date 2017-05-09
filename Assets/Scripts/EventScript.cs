@@ -55,7 +55,7 @@ public class EventScript : MonoBehaviour, IComparable<EventScript>
     {
         return this.time.CompareTo(other.time);
     }
-    public string getEventData()
+    public virtual string getEventData()
     {
         string str = time + " " + eventType + " " + ambulanceName + " " + description + " " + victimName;
         return str;
