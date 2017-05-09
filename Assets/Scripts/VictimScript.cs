@@ -19,7 +19,8 @@ public class VictimScript : MonoBehaviour {
     public GameObject[] hospitalsArray;
     private float hospitalDistance;
     private float hospitalShortestDistance;
-
+    private bool madeSavedEvent;
+    public int timeRescued = 0;
     public VictimScript(int victimNum, int x, int y, int survTime)
     {
         victimNumber = victimNum;
@@ -41,6 +42,7 @@ public class VictimScript : MonoBehaviour {
                 closestHospital = hosp;
             }
         }
+        madeSavedEvent = false;
     }
     // Use this for initialization
     void Start () {
@@ -56,7 +58,7 @@ public class VictimScript : MonoBehaviour {
         if(simulationManager.initialSeekAlgorithmDone)
         {
             //If the victim is NOT saved
-            if(!isSaved)
+            if (!isSaved)
             {
                 timer += Time.deltaTime;
                 if (timer > simulationStep)
@@ -74,6 +76,13 @@ public class VictimScript : MonoBehaviour {
                     GameObject X = Instantiate(victimDeadX, this.transform.position, Quaternion.identity);
                     X.transform.parent = this.transform;
                 }
+            }
+            else if (madeSavedEvent == false)
+            {
+                madeSavedEvent = true;
+                EventScriptVictim es = new EventScriptVictim(this.name, (int)position.x, (int)position.y, survivalTime, true, timeRescued, ambulanceToPickUpVictim.name, currentStep);
+                //EventScript es = new EventScriptVictim(name, LocationInfo, survivalTime, ifSaved, timeRescued, ambulanceThatUnloaded, "unloaded at", time);
+
             }
             
         }

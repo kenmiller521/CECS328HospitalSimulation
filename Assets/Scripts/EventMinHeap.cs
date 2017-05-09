@@ -136,5 +136,25 @@ public class EventMinHeap{
         //else
            // Debug.Log("The Heap is empty.");
     }
-    
+    public void writeToFileVictim()
+    {
+        eventStringList = new List<string>();
+        if (load != 0)
+        {
+            for (int i = 1; i < load + 1; i++)
+            {
+                eventStringList.Add(eventArray[i].getEventData());
+                lines = eventStringList.ToArray();
+                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\WriteLines.txt", lines);
+                //Debug.Log(eventArray[i].toStringgggg());
+                //if (eventArray[i].getTime() == int.MaxValue)
+                //    Debug.Log("null");
+                //else
+                //    Debug.Log(eventArray[i]);
+            }
+        }
+        //else
+        // Debug.Log("The Heap is empty.");
+    }
+
 }

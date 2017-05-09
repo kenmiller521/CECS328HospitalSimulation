@@ -19,6 +19,9 @@ public class EventScript : MonoBehaviour, IComparable<EventScript>
 	void Update () {
 		
 	}
+    public EventScript()
+    {
+    }
     public EventScript(int t, string e, string a, string d, string v)
     {
         time = t;
