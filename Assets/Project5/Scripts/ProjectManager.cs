@@ -53,6 +53,8 @@ public class ProjectManager : MonoBehaviour {
                 dg = new DirectedGraph();
                 foreach (GameObject obj in nodes)
                     obj.SetActive(false);
+                foreach (GameObject obj in nodes2)
+                    obj.SetActive(false);
                 mainText.text = "You have chosen to input a list of directed edges.\nEnter your edges below like this:\na,b,c,d,e,f,g,h,\nThe follow edges will be made:\n(a,b),(c,d),(e,f),(g,h)\nA breadth-first traversal starting at the first node will be displayed.";
                 while(otherUserInput == null)
                     yield return null;
@@ -102,6 +104,10 @@ public class ProjectManager : MonoBehaviour {
                 otherUserInput = null;
                 break;
             case 2:
+
+                removeLineRenderers();
+                foreach (GameObject obj in nodes)
+                    obj.SetActive(false);
                 otherUserInput = "a,f,a,h,b,m,d,l,f,e,f,g,g,a,g,j,g,l,h,c,h,i,j,b,j,d,j,m,k,c,k,d,k,h,k,j,k,m,l,c,l,i";
                 edgesToAddString = "k,j,m,i,j,b,e,m,h,l,j,k,j,i,i,d,e,a,h,c,i,m,d,i,g,c,k,l,f,d,a,b,h,k,e,f,g,h,h,g,e,h,l,m,i,b,h,j,e,d,e,b,a,c,a,h,g,d,c,j,j,l,h,m,e,l,e,j,g,j";
                 string[] tokens2 = edgesToAddString.Split(',');
@@ -121,7 +127,7 @@ public class ProjectManager : MonoBehaviour {
                 List<string> fileOutputStringList = new List<string>();
                 string updatedOtherUserInput = null;
                 //Go through, in increasing order, of the number of nodes in a set i.e. set of 1 nodes, set of 2 nodes, set of 3 nodes, etc.
-                for(int k = 1; k <= 1; k++)
+                for(int k = 1; k <= 2; k++)
                 {
                     //while there is a next combination of the k-size subset
                     while (next_combination(intToEdgesMapArray, k, numberOfEdges))
@@ -138,9 +144,11 @@ public class ProjectManager : MonoBehaviour {
                         //This for loop maps the integers in the integer array to the edges array
                         for (int i = 0; i < k; i++)
                         {
-                            //fileOutputStringList.Add(edgesToAdd[intToEdgesMapArray[i] - 1].ToString());
+                            fileOutputStringList.Add(edgesToAdd[intToEdgesMapArray[i] - 1].ToString());
                             updatedOtherUserInput += "," + edgesToAdd[intToEdgesMapArray[i] - 1].getStartVertex() + "," + edgesToAdd[intToEdgesMapArray[i] - 1].getEndVertex();
                         }
+
+                        fileOutputStringList.Add("\n");
                         //Removes the commas from the string
                         tokens = updatedOtherUserInput.Split(',');
                         //go through the tokens and add them to the list of connecting nodes
@@ -165,51 +173,23 @@ public class ProjectManager : MonoBehaviour {
                         dg.setDirectedNodeParent(connectingNodes);
                         connectingNodes.Reverse();
                         outputText.text = dg.breadthFirstTraversalOption2();
-                        Debug.Log(outputText.text);
+                        
                     }
-                    intToEdgesMapArray = alreadyReinitializedIntArray;
+
+                    //intToEdgesMapArray = alreadyReinitializedIntArray;
+                    for (int i = 0; i < numberOfEdges; i++)
+                    {
+                        intToEdgesMapArray[i] = i + 1;
+                    }
+
                 }
-                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\ConnectingNodesToAdd.txt", fileOutputStringList.ToArray());
-                /*tokens = otherUserInput.Split(',');
-                foreach (string str in tokens)
+                if(outputText.text.Contains("NOT"))
                 {
                     foreach (GameObject obj in nodes2)
-                    {
-                        if (obj.name == str.ToUpper())
-                        {
-                            obj.SetActive(true);
-                            connectingNodes.Add(obj);
-                            if (!uniqueNodes.Contains(obj))
-                            {
-                                uniqueNodes.Add(obj);
-                                dg.insertNode(new DirectedNode(obj.name));
-                            }
-                        }
-                    }
+                        obj.SetActive(false);
                 }
-                //dg.printGraph();
-                //This for loop creates line renderers and connects them
-                for (int i = 0; i < tokens.Length; i++)
-                {
-                    if (i + 1 < tokens.Length)
-                    {
-                        GameObject obj = (GameObject)Instantiate(lineRendererObject, transform.position, Quaternion.identity);
-                        lineRendererObjects.Add(obj);
-                        LineRenderer lr = obj.GetComponent<LineRenderer>();
-                        lr.positionCount = 2;
-                        lr.SetPosition(0, new Vector3(connectingNodes[i].transform.position.x, connectingNodes[i].transform.position.y, 0));
-                        lr.SetPosition(1, new Vector3(connectingNodes[i + 1].transform.position.x, connectingNodes[i + 1].transform.position.y, 0));
-                        lr.startColor = Random.ColorHSV();
-                        lr.endColor = Random.ColorHSV();
-                        i++;
-                    }
-                }
-                dg.setDirectedNodeChildren(connectingNodes);
-                connectingNodes.Reverse();
-                dg.setDirectedNodeParent(connectingNodes);
-                connectingNodes.Reverse();
-                outputText.text = dg.breadthFirstTraversal();
-                outputText.text += dg.outputUnconnectedNodes();*/
+                Debug.Log(outputText.text);
+                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\ConnectingNodesToAdd.txt", fileOutputStringList.ToArray());
                 mainText.text = "Enter choice below:\n1. Enter list of directed edges\n2. Determine minimum gas pipes\n3.Quit";
                 inputField.gameObject.SetActive(true);
                 otherInputField.gameObject.SetActive(false);
