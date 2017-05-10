@@ -127,10 +127,8 @@ public class SimulationManager : MonoBehaviour {
             AmbulanceScript ambScript = obj.GetComponent<AmbulanceScript>();
             ambScript.usingMyAlgorithm = true;
             ambScript.seekVictimMyAlgorithm();
-            Debug.Log(ambScript.name + " seeking");
             while (ambScript.seekFinished == false)
             {
-                Debug.Log(ambScript.name + " seeking");
                 yield return null;
             }
 

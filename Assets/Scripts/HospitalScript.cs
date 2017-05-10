@@ -13,7 +13,7 @@ public class HospitalScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (numberOfSpotsTaken == totalNumberOfSpots)
+        if (numberOfSpotsTaken >= totalNumberOfSpots)
             allLocationsFull = true;
         else
             allLocationsFull = false;

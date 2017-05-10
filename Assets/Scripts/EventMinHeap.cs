@@ -125,7 +125,7 @@ public class EventMinHeap{
             {
                 eventStringList.Add(eventArray[i].getEventData());
                 lines = eventStringList.ToArray();
-                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\WriteLines.txt", lines);
+                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\EntireHeap.txt", lines);
                 //Debug.Log(eventArray[i].toStringgggg());
                 //if (eventArray[i].getTime() == int.MaxValue)
                 //    Debug.Log("null");
@@ -145,7 +145,7 @@ public class EventMinHeap{
             {
                 eventStringList.Add(eventArray[i].getEventData());
                 lines = eventStringList.ToArray();
-                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\WriteLines2.txt", lines);
+                System.IO.File.WriteAllLines(@"C:\Users\Public\TestFolder\VictimHeap.txt", lines);
                 //Debug.Log(eventArray[i].toStringgggg());
                 //if (eventArray[i].getTime() == int.MaxValue)
                 //    Debug.Log("null");
