@@ -39,32 +39,53 @@ public class DirectedGraph : MonoBehaviour {
     }
     public void setDirectedNodeChildren(List<GameObject> nodesList)
     {
+        if (nodesList.Count % 2 == 0)
+        {
             for (int i = 0; i < nodesList.Count; i++)
             {
-                if (i + 1 < nodesList.Count)
-                {
-                    DirectedNode dn = getNode(nodesList[i].name.ToUpper());
-                    Debug.Log(getNode(nodesList[i + 1].name.ToUpper()).getNodeName() + " is child of " + dn.getNodeName());
-                    dn.addChild(getNode(nodesList[i + 1].name.ToUpper()));
-                    i++;
-                }
+                DirectedNode dn = getNode(nodesList[i].name.ToUpper());
+                Debug.Log(getNode(nodesList[i + 1].name.ToUpper()).getNodeName() + " is child of " + dn.getNodeName());
+                dn.addChild(getNode(nodesList[i + 1].name.ToUpper()));
+                i++;
+
             }
-        
-        
+        }
+        else
+        {
+            for (int i = 0; i < nodesList.Count-1; i++)
+            {
+                DirectedNode dn = getNode(nodesList[i].name.ToUpper());
+                Debug.Log(getNode(nodesList[i + 1].name.ToUpper()).getNodeName() + " is child of " + dn.getNodeName());
+                dn.addChild(getNode(nodesList[i + 1].name.ToUpper()));
+                i++;
+            }
+        }
     }
     public void setDirectedNodeParent(List<GameObject> nodesList)
     { 
-        for (int i = 0; i < nodesList.Count; i++)
+        if(nodesList.Count%2==0)
         {
-            if(i+1 < nodesList.Count)
+            for (int i = 0; i < nodesList.Count; i++)
+            {
+                DirectedNode dn = getNode(nodesList[i].name.ToUpper());
+                Debug.Log(getNode(nodesList[i + 1].name.ToUpper()).getNodeName() + " is parent of " + dn.getNodeName());
+                dn.addParent(getNode(nodesList[i + 1].name.ToUpper()));
+                i++;
+
+
+            }
+        }
+        else
+        {
+            for (int i = 1; i < nodesList.Count; i++)
             {
                 DirectedNode dn = getNode(nodesList[i].name.ToUpper());
                 Debug.Log(getNode(nodesList[i + 1].name.ToUpper()).getNodeName() + " is parent of " + dn.getNodeName());
                 dn.addParent(getNode(nodesList[i + 1].name.ToUpper()));
                 i++;
             }
-                
         }
+        
         
         
     }
@@ -89,7 +110,6 @@ public class DirectedGraph : MonoBehaviour {
         {
             //Remove the vertex at the beginning of the queue
             DirectedNode currentNode = queue.Dequeue();
-            //Debug.Log("QUEUE COUNT: " +queue.Count);
             //Get the children vertices of the newly dequeued node
             List<DirectedNode> nodeList = currentNode.getChildList();
             //go through list
@@ -108,5 +128,20 @@ public class DirectedGraph : MonoBehaviour {
             }
         }
         return str;
+    }
+    public string outputUnconnectedNodes()
+    {
+        string str = null;
+        foreach(DirectedNode dn in nodes)
+        {
+            if(dn.isVisisted() == false)
+                str+= "DISTANCE FROM " + dn.getNodeName() + " TO A IS INF \n";
+        }
+        return str;
+    }
+    public void clearLists()
+    {
+        foreach (DirectedNode dn in nodes)
+            dn.clearLists();
     }
 }

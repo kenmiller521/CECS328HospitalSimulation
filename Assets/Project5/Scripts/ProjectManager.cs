@@ -10,6 +10,7 @@ public class ProjectManager : MonoBehaviour {
     public List<GameObject> connectingNodes;
     public List<GameObject> uniqueNodes;
     public GameObject lineRendererObject;
+    private List<GameObject> lineRendererObjects;
     private DirectedGraph dg;
     private int userInput;
     private string otherUserInput;
@@ -17,6 +18,7 @@ public class ProjectManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         //StartCoroutine(MainMenu());
+        lineRendererObjects = new List<GameObject>();
         connectingNodes = new List<GameObject>();
         nodes = GameObject.FindGameObjectsWithTag("Node");
         foreach (GameObject obj in nodes)
@@ -35,6 +37,13 @@ public class ProjectManager : MonoBehaviour {
             case 1:
                 inputField.gameObject.SetActive(false);
                 otherInputField.gameObject.SetActive(true);
+                outputText.text = " ";
+                uniqueNodes.Clear();
+                connectingNodes.Clear();
+                removeLineRenderers();
+                dg = new DirectedGraph();
+                foreach (GameObject obj in nodes)
+                    obj.SetActive(false);
                 mainText.text = "You have chosen to input a list of directed edges.\nEnter your edges below like this:\na,b,c,d,e,f,g,h,\nThe follow edges will be made:\n(a,b),(c,d),(e,f),(g,h)\nA breadth-first traversal starting at the first node will be displayed.";
                 while(otherUserInput == null)
                     yield return null;
@@ -53,8 +62,7 @@ public class ProjectManager : MonoBehaviour {
                                 uniqueNodes.Add(obj);
                                 dg.insertNode(new DirectedNode(obj.name));
                             }
-                        }
-                           
+                        }                           
                     }
                 }
                 dg.printGraph();
@@ -63,6 +71,7 @@ public class ProjectManager : MonoBehaviour {
                     if(i+1 <tokens.Length)
                     {
                         GameObject obj = (GameObject)Instantiate(lineRendererObject, transform.position, Quaternion.identity);
+                        lineRendererObjects.Add(obj);
                         LineRenderer lr = obj.GetComponent<LineRenderer>();
                         lr.positionCount = 2;
                         lr.SetPosition(0, new Vector3(connectingNodes[i].transform.position.x, connectingNodes[i].transform.position.y, 0));
@@ -70,17 +79,19 @@ public class ProjectManager : MonoBehaviour {
                         lr.startColor = Random.ColorHSV();
                         lr.endColor = Random.ColorHSV();
                         i++;
-                    }
-                    
+                    }                    
                 }
                 dg.setDirectedNodeChildren(connectingNodes);
                 connectingNodes.Reverse();
                 dg.setDirectedNodeParent(connectingNodes);
                 connectingNodes.Reverse();
-                //dg.breadthFirstTraversal();
+                dg.printNodesChildList();
                 outputText.text = dg.breadthFirstTraversal();
-                inputField.gameObject.SetActive(true);
+                outputText.text += dg.outputUnconnectedNodes();
+                mainText.text = "Enter choice below:\n1. Enter list of directed edges\n2. Determine minimum gas pipes\n3.Quit";
+                inputField.gameObject.SetActive(true);                
                 otherInputField.gameObject.SetActive(false);
+                otherUserInput = null;
                 break;
             case 2:
                 break;
@@ -98,4 +109,12 @@ public class ProjectManager : MonoBehaviour {
     {
         otherUserInput = otherInputField.text;
     }
+    private void removeLineRenderers()
+    {
+        for(int i = 0; i < lineRendererObjects.Count; i++)
+        {
+            Destroy(lineRendererObjects[i]);
+        }
+        lineRendererObjects.Clear();
+    } 
 }

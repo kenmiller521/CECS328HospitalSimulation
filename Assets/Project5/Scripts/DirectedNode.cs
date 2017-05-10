@@ -62,24 +62,11 @@ public class DirectedNode : MonoBehaviour {
             return counter;
         else
             dn.traceBack(targetNode, ref counter);
-        //}
-
-
-        /* if (parents.Contains(targetNode))
-        {
-            Debug.Log("FOUND");
-            return counter;
-        }
-            
-        else
-        {
-            foreach (DirectedNode dn in parents)
-            {
-                Debug.Log("THE PARENT: " + dn.getNodeName());
-                dn.traceBack(targetNode, counter);
-            }
-                
-        }*/
         return counter;
+    }
+    public void clearLists()
+    {
+        parents.Clear();
+        children.Clear();
     }
 }
