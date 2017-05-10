@@ -57,11 +57,15 @@ public class DirectedNode : MonoBehaviour {
     public int traceBack(DirectedNode targetNode, ref int counter)
     {
         counter++;
-        DirectedNode dn = parents[0];
-        if (dn.getNodeName() == targetNode.getNodeName())
-            return counter;
-        else
-            dn.traceBack(targetNode, ref counter);
+        if(parents.Count != 0)
+        {
+            DirectedNode dn = parents[0];
+            if (dn.getNodeName() == targetNode.getNodeName())
+                return counter;
+            else
+                dn.traceBack(targetNode, ref counter);
+        }
+        
         return counter;
     }
     public void clearLists()
